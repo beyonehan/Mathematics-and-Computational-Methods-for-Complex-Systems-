@@ -5,6 +5,7 @@
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+import random
 
 # Definition of Complex landscape
 def ComplexLandscape(x, y):
@@ -35,13 +36,19 @@ def GradAscent(StartPt,NumSteps,LRate):
     PauseFlag=1
     for i in range(NumSteps):
         # TO DO: Calculate the 'height' at StartPt using SimpleLandscape or ComplexLandscape
+        height = ComplexLandscape(StartPt[0], StartPt[1])
         
         # TO DO: Plot point on the landscape
         # Use a markersize that you can see well enough (e.g., * in size 10)
-        
+        plt.plot(StartPt[0], StartPt[1],height, 'or', markersize= 10) 
+        plt.show()
         # TO DO: Calculate the gradient at StartPt using SimpleLandscapeGrad or ComplexLandscapeGrad
-        
+        gradient = ComplexLandscapeGrad(StartPt[0], StartPt[1])
         # TO DO: Calculate the new point and update StartPt
+
+        StartPt = StartPt + LRate * gradient
+
+        NewHeight = ComplexLandscape(StartPt[0],StartPt[1])
         
         # Ensure StartPt is within the specified bounds (un/comment relevant lines)
         StartPt = np.maximum(StartPt,[-2,-2])
@@ -57,12 +64,21 @@ def GradAscent(StartPt,NumSteps,LRate):
 
 # TO DO: Mutation function
 # Returns a mutated point given the old point and the range of mutation
-def Mutate(OldPt,MaxMutate):
+def Mutate(OldPt, MaxMutate):
     # TO DO: Select a random distance MutDist to mutate in the range (-MaxMutate,MaxMutate)
-    
+     MutDist = np.random.uniform(-MaxMutate,MaxMutate)
+
+     index = np.random.randint(0, len(OldPt))
+     print('*** OldPt = {},MutDist = {}'.format(OldPt,MutDist))
+     OldPt[index] = OldPt[index] + MutDist
+
+     MutatedPt =  OldPt
+     print("**** MutatedPt =",MutatedPt)
+
     # TO DO: Randomly choose which element of OldPt to mutate and mutate by MutDist
-    
-    return MutatedPt
+
+     return MutatedPt
+
     
 
 # Function implementing hill climbing
@@ -91,21 +107,33 @@ def HillClimb(StartPt,NumSteps,MaxMutate):
         # Pause to view output
         if PauseFlag:
             x=plt.waitforbuttonpress()
-        
 
 # Template
 # Plot the landscape (un/comment relevant line)
 plt.ion()
 fig = plt.figure()
-ax = DrawSurface(fig, np.arange(-2,2.025,0.025), np.arange(-2,2.025,0.025), SimpleLandscape)
-#ax = DrawSurface(fig, np.arange(-3,7.025,0.025), np.arange(-3,7.025,0.025), ComplexLandscape)
+
+ax = DrawSurface(fig, np.arange(-3,7.025,0.025), np.arange(-3,7.025,0.025), ComplexLandscape)
 
 # Enter maximum number of iterations of the algorithm, learning rate and mutation range
 NumSteps=50
 LRate=0.35
 MaxMutate=1
 
+def StopCondition(NewHeight, OldHeight):
+
+    if(abs(NewHeight - OldHeight)) < 0.0001:
+        return True
+    else:
+        return False
+
 # TO DO: choose a random starting point with x and y in the range (-2, 2) for simple landscape, (-3,7) for complex landscape
+
+# #hanli
+x = random.uniform(-3,7)
+y = random.uniform(-3,7)
+
+StartPt = np.array([x,y])
 
 # Find maximum (un/comment relevant line)
 GradAscent(StartPt,NumSteps,LRate)

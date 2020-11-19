@@ -115,8 +115,15 @@ def HillClimb(StartPt,NumSteps,MaxMutate):
         # Pause to view output
         if PauseFlag:
             x=plt.waitforbuttonpress()
-        
 
+
+def StopCondition(NewHeight, OldHeight):
+
+    if(abs(NewHeight - OldHeight)) < 0.0001:
+        return True
+    else:
+        return False
+        
 # Template 
 # Plot the landscape (un/comment relevant line)
 plt.ion()
