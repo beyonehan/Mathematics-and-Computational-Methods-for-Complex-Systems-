@@ -35,16 +35,24 @@ def DrawSurface(fig, varxrange, varyrange, function):
     fig.canvas.draw()
     return ax
 
+def StopCondition(NewHeight, OldHeight):
+
+    if(abs(NewHeight - OldHeight)) < 0.0001:
+        return True
+    else:
+        return False
+        
+
 
     # Function implementing gradient ascent
 def GradAscent(StartPt,NumSteps,LRate):
-    PauseFlag=1
+    MaxHeight = 4
+    PauseFlag = 0
     for i in range(NumSteps):
         # TO DO: Calculate the 'height' at StartPt using SimpleLandscape or ComplexLandscape
         
         height = SimpleLandscape(StartPt[0],StartPt[1])
 
-        
         # TO DO: Plot point on the landscape 
         # Use a markersize that you can see well enough (e.g., * in size 10)
         plt.plot(StartPt[0],StartPt[1],height, 'or',markersize=10 )
@@ -55,12 +63,22 @@ def GradAscent(StartPt,NumSteps,LRate):
         
         # TO DO: Calculate the new point and update StartPt
         StartPt = StartPt + LRate * gradient
+       
+
+        New_height = SimpleLandscape(StartPt[0],StartPt[1])
+
+        print(" GradAscent new_height = {}".format(New_height))
         
         # Ensure StartPt is within the specified bounds (un/comment relevant lines)
         StartPt = np.maximum(StartPt,[-2,-2])
         StartPt = np.minimum(StartPt,[2,2])
-        #StartPt = np.maximum(Start,[-3,-3])
-        #StartPt = np.minimum(StartPt,[7,7])
+
+        if New_height >= MaxHeight:
+            # print('GradAscent 到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return True,i 
+        elif i == NumSteps -1 :
+            # print('GradAscent 没有到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return False,i 
         
         # Pause to view output
         if PauseFlag:
@@ -87,7 +105,8 @@ def Mutate(OldPt, MaxMutate):
 
     # Function implementing hill climbing
 def HillClimb(StartPt,NumSteps,MaxMutate):
-    PauseFlag=1
+    PauseFlag = 0
+    MaxHeight = 4
     for i in range(NumSteps):
         # TO DO: Calculate the 'height' at StartPt using SimpleLandscape or ComplexLandscape
         start_height = SimpleLandscape(StartPt[0],StartPt[1])
@@ -112,18 +131,16 @@ def HillClimb(StartPt,NumSteps,MaxMutate):
         if new_height > start_height:
             StartPt = NewPt
 
+        if new_height >= MaxHeight:
+            return True,i
+        elif i == NumSteps -1 :
+            return False,i
         # Pause to view output
         if PauseFlag:
             x=plt.waitforbuttonpress()
 
 
-def StopCondition(NewHeight, OldHeight):
 
-    if(abs(NewHeight - OldHeight)) < 0.0001:
-        return True
-    else:
-        return False
-        
 # Template 
 # Plot the landscape (un/comment relevant line)
 plt.ion()
@@ -132,8 +149,8 @@ ax = DrawSurface(fig, np.arange(-2,2.025,0.025), np.arange(-2,2.025,0.025), Simp
 #ax = DrawSurface(fig, np.arange(-3,7.025,0.025), np.arange(-3,7.025,0.025), ComplexLandscape)
 
 # Enter maximum number of iterations of the algorithm, learning rate and mutation range
-NumSteps=50
-LRate=0.35
+NumSteps=5000
+LRate=0.03
 MaxMutate=1
 
 # TO DO: choose a random starting point with x and y in the range (-2, 2) for simple landscape, (-3,7) for complex landscape
@@ -142,7 +159,12 @@ y = random.uniform(-2,2)
 StartPt = np.array([x,y])
 
 # Find maximum (un/comment relevant line)
-GradAscent(StartPt,NumSteps,LRate)
-#HillClimb(StartPt,NumSteps,MaxMutate)
+G_reachMaxHeight , G_steps = GradAscent(StartPt,NumSteps,LRate)
+H_reachMaxHeight , H_steps = HillClimb(StartPt,NumSteps,MaxMutate)
+
+
+print( 'GradAscent G_reachMaxHeight = {}, G_steps use  = {},LRate = {} ,NumSteps = {}'.format(G_reachMaxHeight,G_steps,LRate,NumSteps))
+print('HillClimb   H_reachMaxHeight = {}, H_steps use  = {},LRate= {},NumSteps = {} '.format(H_reachMaxHeight,H_steps,LRate,NumSteps))
+
 
     
