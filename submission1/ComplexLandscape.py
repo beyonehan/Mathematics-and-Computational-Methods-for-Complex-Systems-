@@ -86,23 +86,28 @@ def HillClimb(StartPt,NumSteps,MaxMutate):
     PauseFlag=1
     for i in range(NumSteps):
         # TO DO: Calculate the 'height' at StartPt using SimpleLandscape or ComplexLandscape
+
+        start_height = ComplexLandscape(StartPt[0],StartPt[1])
         
         # TO DO: Plot point on the landscape
         # Use a markersize that you can see well enough (e.g., * in size 10)
+        ax.plot(StartPt[0], StartPt[1] ,start_height,'or', markersize= 10)  # o for disk and r for red
+        plt.show()
         
         # Mutate StartPt into NewPt
         NewPt = Mutate(np.copy(StartPt),MaxMutate) # Use copy because Python passes variables by references (see Mutate function)
         
         # Ensure NewPt is within the specified bounds (un/comment relevant lines)
-        NewPt = np.maximum(NewPt,[-2,-2])
-        NewPt = np.minimum(NewPt,[2,2])
-        #NewPt = np.maximum(NewPt,[-3,-3])
-        #NewPt = np.minimum(NewPt,[7,7])
+       
+        NewPt = np.maximum(NewPt,[-3,-3])
+        NewPt = np.minimum(NewPt,[7,7])
                
         # TO DO: Calculate the height of the new point
+        new_height = ComplexLandscape(NewPt[0],NewPt[1])
                 
         # TO DO: Decide whether to update StartPt or not
-
+        if new_height > start_height:
+            StartPt = NewPt
          
         # Pause to view output
         if PauseFlag:
