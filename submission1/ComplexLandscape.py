@@ -7,6 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import random
 
+
 # Definition of Complex landscape
 def ComplexLandscape(x, y):
     return 4*(1-x)**2*np.exp(-(x**2)-(y+1)**2) -15*(x/5 - x**3 - y**5)*np.exp(-x**2-y**2) -(1./3)*np.exp(-(x+1)**2 - y**2)-1*(2*(x-3)**7 -0.3*(y-4)**5+(y-3)**9)*np.exp(-(x-3)**2-(y-3)**2)
@@ -82,36 +83,45 @@ def Mutate(OldPt, MaxMutate):
     
 
 # Function implementing hill climbing
-def HillClimb(StartPt,NumSteps,MaxMutate):
-    PauseFlag=1
+def HillClimb(StartPt, NumSteps, MaxMutate):
+    PauseFlag = 0
     for i in range(NumSteps):
+        print("HillClimb i = ",i )
         # TO DO: Calculate the 'height' at StartPt using SimpleLandscape or ComplexLandscape
 
         start_height = ComplexLandscape(StartPt[0],StartPt[1])
-        
+
         # TO DO: Plot point on the landscape
         # Use a markersize that you can see well enough (e.g., * in size 10)
         ax.plot(StartPt[0], StartPt[1] ,start_height,'or', markersize= 10)  # o for disk and r for red
         plt.show()
-        
+
         # Mutate StartPt into NewPt
-        NewPt = Mutate(np.copy(StartPt),MaxMutate) # Use copy because Python passes variables by references (see Mutate function)
-        
+        NewPt = Mutate(np.copy(StartPt),
+                       MaxMutate)  # Use copy because Python passes variables by references (see Mutate function)
+
         # Ensure NewPt is within the specified bounds (un/comment relevant lines)
-       
+        # NewPt = np.maximum(NewPt, [-2, -2])
+        # NewPt = np.minimum(NewPt, [2, 2])
         NewPt = np.maximum(NewPt,[-3,-3])
         NewPt = np.minimum(NewPt,[7,7])
-               
+
         # TO DO: Calculate the height of the new point
+
         new_height = ComplexLandscape(NewPt[0],NewPt[1])
-                
+
         # TO DO: Decide whether to update StartPt or not
+
+        print("New height = {} NewStartPoint ={} ".format(new_height, NewPt))
+
         if new_height > start_height:
             StartPt = NewPt
-         
-        # Pause to view output
+
+            start_height = new_height
+#         # Pause to view output
         if PauseFlag:
-            x=plt.waitforbuttonpress()
+            x = plt.waitforbuttonpress()
+
 
 # Template
 # Plot the landscape (un/comment relevant line)

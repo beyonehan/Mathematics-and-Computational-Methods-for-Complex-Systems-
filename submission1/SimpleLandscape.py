@@ -103,41 +103,52 @@ def Mutate(OldPt, MaxMutate):
      return MutatedPt
 
 
-    # Function implementing hill climbing
-def HillClimb(StartPt,NumSteps,MaxMutate):
+# Function implementing hill climbing
+def HillClimb(StartPt, NumSteps, MaxMutate):
     PauseFlag = 0
-    MaxHeight = 4
     for i in range(NumSteps):
+        print("HillClimb i = ",i )
         # TO DO: Calculate the 'height' at StartPt using SimpleLandscape or ComplexLandscape
+
         start_height = SimpleLandscape(StartPt[0],StartPt[1])
-        # TO DO: Plot point on the landscape 
+
+        # TO DO: Plot point on the landscape
         # Use a markersize that you can see well enough (e.g., * in size 10)
-        plt.plot(StartPt[0], StartPt[1], start_height, 'or', markersize=10)
+        ax.plot(StartPt[0], StartPt[1] ,start_height,'or', markersize= 10)  # o for disk and r for red
         plt.show()
-       
+
         # Mutate StartPt into NewPt
-        NewPt = Mutate(np.copy(StartPt),MaxMutate) # Use copy because Python passes variables by references (see Mutate function)
-        
+        NewPt = Mutate(np.copy(StartPt),
+                       MaxMutate)  # Use copy because Python passes variables by references (see Mutate function)
+
         # Ensure NewPt is within the specified bounds (un/comment relevant lines)
-        NewPt = np.maximum(NewPt,[-2,-2])
-        NewPt = np.minimum(NewPt,[2,2])
-        #NewPt = np.maximum(NewPt,[-3,-3])
-        #NewPt = np.minimum(NewPt,[7,7])
-               
+        # NewPt = np.maximum(NewPt, [-2, -2])
+        # NewPt = np.minimum(NewPt, [2, 2])
+        NewPt = np.maximum(NewPt,[-3,-3])
+        NewPt = np.minimum(NewPt,[7,7])
+
         # TO DO: Calculate the height of the new point
+
         new_height = SimpleLandscape(NewPt[0],NewPt[1])
-                
+
         # TO DO: Decide whether to update StartPt or not
+
+        print("New height = {} NewStartPoint ={} ".format(new_height, NewPt))
+
         if new_height > start_height:
             StartPt = NewPt
 
-        if new_height >= MaxHeight:
-            return True,i
-        elif i == NumSteps -1 :
-            return False,i
-        # Pause to view output
+            start_height = new_height
+
+        if New_height >= MaxHeight:
+            # print('HillClimb 到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return True, i
+        elif i == NumSteps - 1:
+            # print('HillClimb 没有到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return False, i
+        #         # Pause to view output
         if PauseFlag:
-            x=plt.waitforbuttonpress()
+            x = plt.waitforbuttonpress()
 
 
 
@@ -149,9 +160,9 @@ ax = DrawSurface(fig, np.arange(-2,2.025,0.025), np.arange(-2,2.025,0.025), Simp
 #ax = DrawSurface(fig, np.arange(-3,7.025,0.025), np.arange(-3,7.025,0.025), ComplexLandscape)
 
 # Enter maximum number of iterations of the algorithm, learning rate and mutation range
-NumSteps=5000
-LRate=0.03
-MaxMutate=1
+NumSteps=50
+LRate= 0.1;
+MaxMutate= 1
 
 # TO DO: choose a random starting point with x and y in the range (-2, 2) for simple landscape, (-3,7) for complex landscape
 x = random.uniform(-2,2)
@@ -162,9 +173,19 @@ StartPt = np.array([x,y])
 G_reachMaxHeight , G_steps = GradAscent(StartPt,NumSteps,LRate)
 H_reachMaxHeight , H_steps = HillClimb(StartPt,NumSteps,MaxMutate)
 
-
+ 
+GradAscent_print  =  'GradAscent G_reachMaxHeight = {}, G_steps use  = {},LRate = {} ,NumSteps = {}'.format(G_reachMaxHeight,G_steps,LRate,NumSteps))
 print( 'GradAscent G_reachMaxHeight = {}, G_steps use  = {},LRate = {} ,NumSteps = {}'.format(G_reachMaxHeight,G_steps,LRate,NumSteps))
 print('HillClimb   H_reachMaxHeight = {}, H_steps use  = {},LRate= {},NumSteps = {} '.format(H_reachMaxHeight,H_steps,LRate,NumSteps))
 
 
-    
+# x=np.linspace(-2.0,2.0,100)
+# y=np.linspace(-2.0,2.0,100)
+
+# X, Y = np.meshgrid(x, y)#生成坐标矩阵# y=np.linspace(-2.0,2.0,2000)
+# xy= np.vstack([X.ravel(),Y.ravel()]).T#xy就是生成的网格，它是遍布在整个画布上的密集的点
+
+
+# def saveLineSpacePointTestToCSV(xList,yList):
+
+
