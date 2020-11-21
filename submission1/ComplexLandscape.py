@@ -34,7 +34,8 @@ def DrawSurface(fig, varxrange, varyrange, function):
 
 # Function implementing gradient ascent
 def GradAscent(StartPt,NumSteps,LRate):
-    PauseFlag=1
+    MaxHeight = 12.23
+    PauseFlag= 0
     for i in range(NumSteps):
         # TO DO: Calculate the 'height' at StartPt using SimpleLandscape or ComplexLandscape
         height = ComplexLandscape(StartPt[0], StartPt[1])
@@ -49,13 +50,20 @@ def GradAscent(StartPt,NumSteps,LRate):
 
         StartPt = StartPt + LRate * gradient
 
-        NewHeight = ComplexLandscape(StartPt[0],StartPt[1])
+        New_height = ComplexLandscape(StartPt[0],StartPt[1])
         
         # Ensure StartPt is within the specified bounds (un/comment relevant lines)
-        StartPt = np.maximum(StartPt,[-2,-2])
-        StartPt = np.minimum(StartPt,[2,2])
-        #StartPt = np.maximum(Start,[-3,-3])
-        #StartPt = np.minimum(StartPt,[7,7])
+
+        StartPt = np.maximum(StartPt,[-3,-3])
+        StartPt = np.minimum(StartPt,[7,7])
+
+
+        if New_height >= MaxHeight:
+            # print('GradAscent 到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return True,i,New_height
+        elif i == NumSteps -1 :
+            # print('GradAscent 没有到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return False,i,New_height
         
         # Pause to view output
         if PauseFlag:
@@ -84,6 +92,7 @@ def Mutate(OldPt, MaxMutate):
 
 # Function implementing hill climbing
 def HillClimb(StartPt, NumSteps, MaxMutate):
+    MaxHeight = 12
     PauseFlag = 0
     for i in range(NumSteps):
         print("HillClimb i = ",i )
@@ -112,12 +121,19 @@ def HillClimb(StartPt, NumSteps, MaxMutate):
 
         # TO DO: Decide whether to update StartPt or not
 
-        print("New height = {} NewStartPoint ={} ".format(new_height, NewPt))
+        print(" HillClimb New height = {} NewStartPoint ={} ".format(new_height, NewPt))
 
         if new_height > start_height:
             StartPt = NewPt
 
             start_height = new_height
+
+        if new_height >= MaxHeight:
+            # print('HillClimb 到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return True, i,new_height
+        elif i == NumSteps - 1:
+            # print('HillClimb 没有到达极值点 new_height = {} i = {} '.format(New_height,i))
+            return False, i,new_height
 #         # Pause to view output
         if PauseFlag:
             x = plt.waitforbuttonpress()
@@ -151,7 +167,14 @@ y = random.uniform(-3,7)
 StartPt = np.array([x,y])
 
 # Find maximum (un/comment relevant line)
-GradAscent(StartPt,NumSteps,LRate)
+
+G_isReachMax ,G_useSetups,G_New_height = GradAscent(StartPt,NumSteps,LRate)
+
+H_isReachMax ,H_useSetups,H_New_height = HillClimb(StartPt,NumSteps,MaxMutate)
+
+print("GradAscent G_isReachMax = {} ,G_useSetups = {} ,G_New_height = {} ".format(G_isReachMax,G_useSetups,G_New_height))
+
+print("HillClimb  H_isReachMax = {} ,H_useSetups = {} , H_New_height = {}".format(H_isReachMax,H_useSetups,H_New_height))
 #HillClimb(StartPt,NumSteps,MaxMutate)
 
 
